@@ -1,17 +1,20 @@
 on:
   push:
     branches:  main
-  job:
-    Validate-tests:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Baixar o repositório e entrar nessa branch
-          uses: actions/checkout@v3
-        - name: Instala o Java
-          uses: actions/setup-java@v3
-          with:
-            distribution: 'temurin'
-            java-version: '17'
 
-        - name: Valida cobertura dos testes
-          run: mvn clean verify
+jobs:
+  Validate-tests:
+    runs-on: ubuntu-latest
+    name: Tests
+    steps:
+      - name: Baixa o repositório e dá checkout na branch que o job está rodando
+        uses: actions/checkout@v3
+
+      - name: Instala o Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Valida cobertura dos testes
+        run: mvn clean verify

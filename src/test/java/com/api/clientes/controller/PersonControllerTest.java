@@ -59,4 +59,19 @@ public class PersonControllerTest {
         .content(personJson))
         .andExpect(MockMvcResultMatchers.status().isCreated());
   }
+
+  @Test
+  @DisplayName("Caso algum parametro esteja faltando")
+  public void caseError() throws Exception {
+    String personJson = "{\n" +
+        "  \"email\": \"xicrinhobolado@gmail.com\",\n" +
+        "  \"password\": \"12345678\",\n" +
+        "  \"role\": \"ADMIN\"\n" +
+        "}";
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/clients")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(personJson))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest());
+  }
 }

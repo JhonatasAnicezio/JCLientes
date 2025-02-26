@@ -16,7 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@DisplayName("Testes para classe PersonService")
+@DisplayName("Testes camada service: PersonService")
 public class PersonServiceTest {
   @Autowired
   PersonService personService;
@@ -39,7 +39,6 @@ public class PersonServiceTest {
         person.getPassword(),
         person.getRole()
     );
-
     newPerson.setId(1L);
 
     Mockito.when(personRepository.save(person))

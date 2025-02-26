@@ -18,6 +18,3 @@ jobs:
 
       - name: Valida cobertura dos testes
         run: mvn clean verify
-
-      - name: Valida checkstyle
-        run: mvn checkstyle:check

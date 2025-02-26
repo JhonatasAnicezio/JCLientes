@@ -7,6 +7,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+/**
+ *  Class for created Person.
+ *
+ * @param name name at Person
+ * @param email email at Person
+ * @param password password at Person
+ * @param role role at Person
+ */
 public record PersonCreationDto(
     @NotBlank(message = "name is required")
     @Size(min = 3, message = "very short name")
@@ -24,6 +32,11 @@ public record PersonCreationDto(
     Role role
 ) {
 
+  /**
+   *  Method for convert class in Person.
+   *
+   * @return return Person
+   */
   public Person toEntity() {
     return new Person(name, email, password, role);
   }

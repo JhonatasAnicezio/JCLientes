@@ -1,5 +1,8 @@
 package com.api.clientes.util;
 
+/**
+ *  Class enum Role.
+ */
 public enum Role {
   ADMIN("ADMIN"),
   USER("USER"),

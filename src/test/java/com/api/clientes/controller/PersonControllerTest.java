@@ -3,6 +3,7 @@ package com.api.clientes.controller;
 import com.api.clientes.model.entity.Person;
 import com.api.clientes.service.PersonService;
 import com.api.clientes.util.Role;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -28,7 +29,7 @@ public class PersonControllerTest {
   PersonService personService;
 
   @Test
-  @DisplayName("Test requisição POST /clientes")
+  @DisplayName("Test requisição POST /clients")
   public void createPerson() throws Exception {
     Person person = new Person(
         "Xicrinho",
@@ -73,5 +74,15 @@ public class PersonControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(personJson))
         .andExpect(MockMvcResultMatchers.status().isBadRequest());
+  }
+
+  @Test
+  @DisplayName("Teste requisição GET /clients")
+  public void testGetFindAll() throws Exception {
+    Mockito.when(personService.findAll())
+            .thenReturn(List.of());
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/clients"))
+        .andExpect(MockMvcResultMatchers.status().isOk());
   }
 }

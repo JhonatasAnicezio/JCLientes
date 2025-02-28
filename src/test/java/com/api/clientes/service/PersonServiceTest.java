@@ -14,6 +14,7 @@ import org.mockito.mock.MockType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
@@ -51,7 +52,7 @@ public class PersonServiceTest {
     Assertions.assertEquals(1L, savedPerson.getId());
     Assertions.assertEquals(person.getName(), savedPerson.getName());
     Assertions.assertEquals(person.getEmail(), savedPerson.getEmail());
-    Assertions.assertEquals(person.getPassword(), savedPerson.getPassword());
+    Assertions.assertNotEquals(person.getPassword(), savedPerson.getPassword());
     Assertions.assertEquals(person.getRole(), savedPerson.getRole());
 
     Mockito.verify(personRepository).save(person);

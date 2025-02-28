@@ -2,6 +2,7 @@ package com.api.clientes.service;
 
 import com.api.clientes.model.entity.Person;
 import com.api.clientes.model.repository.PersonRepository;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 /**
@@ -28,5 +29,9 @@ public class PersonService {
    */
   public Person create(Person person) {
     return personRepository.save(person);
+  }
+
+  public List<Person> findAll() {
+    return personRepository.findAll();
   }
 }

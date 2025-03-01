@@ -1,5 +1,6 @@
 package com.api.clientes.service;
 
+import com.api.clientes.controller.dto.Token;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,8 +14,9 @@ public class JwtService {
     this.algorithm = Algorithm.HMAC256(secret);
   }
 
-  public String generateToken(String subject) {
-    return JWT.create().withSubject(subject).sign(algorithm);
+  public Token generateToken(String subject) {
+    String encode = JWT.create().withSubject(subject).sign(algorithm);
+    return new Token(encode);
   }
 
   public String getSubject(String token) {

@@ -3,6 +3,9 @@ package com.api.clientes.service;
 import com.api.clientes.model.entity.Person;
 import com.api.clientes.model.repository.PersonRepository;
 import java.util.List;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +13,8 @@ import org.springframework.stereotype.Service;
  *  Class Person Service.
  */
 @Service
-public class PersonService {
+public class PersonService implements UserDetailsService
+{
   private final PersonRepository personRepository;
 
   /**
@@ -38,5 +42,12 @@ public class PersonService {
 
   public List<Person> findAll() {
     return personRepository.findAll();
+  }
+
+  @Override
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
+  {
+    return personRepository.findByEmail(username)
+        .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
   }
 }

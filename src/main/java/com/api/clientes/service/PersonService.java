@@ -2,6 +2,7 @@ package com.api.clientes.service;
 
 import com.api.clientes.model.entity.Person;
 import com.api.clientes.model.repository.PersonRepository;
+import com.api.clientes.util.exception.PersonNotFoundException;
 import java.util.List;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -61,5 +62,13 @@ public class PersonService implements UserDetailsService
   {
     return personRepository.findByEmail(username)
         .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
+  }
+
+  public Person delete(Long id)  {
+    return personRepository.findById(id)
+        .map(person -> {
+          personRepository.delete(person);
+          return person;
+        }).orElseThrow(PersonNotFoundException::new);
   }
 }

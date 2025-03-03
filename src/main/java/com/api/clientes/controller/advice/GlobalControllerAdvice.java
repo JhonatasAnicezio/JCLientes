@@ -1,5 +1,6 @@
 package com.api.clientes.controller.advice;
 
+import com.api.clientes.util.exception.PersonNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -39,6 +40,14 @@ public class GlobalControllerAdvice {
       UsernameNotFoundException exception)
   {
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        .body(exception.getMessage());
+  }
+
+  @ExceptionHandler(PersonNotFoundException.class)
+  public ResponseEntity<String> handleNotFound(
+      PersonNotFoundException exception
+  ) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND)
         .body(exception.getMessage());
   }
 }

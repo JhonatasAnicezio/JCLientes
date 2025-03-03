@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -31,5 +32,13 @@ public class GlobalControllerAdvice {
     
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(errors);
+  }
+
+  @ExceptionHandler(UsernameNotFoundException.class)
+  public ResponseEntity<String> handleUsernameNotFound(
+      UsernameNotFoundException exception)
+  {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        .body(exception.getMessage());
   }
 }

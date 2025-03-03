@@ -16,14 +16,18 @@ import org.springframework.stereotype.Service;
 public class PersonService implements UserDetailsService
 {
   private final PersonRepository personRepository;
+  private final JwtService jwtService;
 
   /**
    *  Constructor Person Service.
    *
    * @param personRepository Person Repository
    */
-  public PersonService(PersonRepository personRepository) {
+  public PersonService(
+      PersonRepository personRepository,
+      JwtService jwtService) {
     this.personRepository = personRepository;
+    this.jwtService = jwtService;
   }
 
   /**
@@ -42,6 +46,14 @@ public class PersonService implements UserDetailsService
 
   public List<Person> findAll() {
     return personRepository.findAll();
+  }
+
+  public Person findByToken(String token) throws UsernameNotFoundException
+  {
+    String subject = jwtService.getSubject(token);
+
+    return personRepository.findByEmail(subject)
+        .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + subject));
   }
 
   @Override

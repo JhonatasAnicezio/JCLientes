@@ -7,12 +7,15 @@ import com.api.clientes.service.PersonService;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -53,5 +56,21 @@ public class PersonController {
         .body(personService.findAll().stream()
             .map(PersonDto::fromEntity)
             .toList());
+  }
+
+  @GetMapping("/me")
+  public ResponseEntity<PersonDto> findByToken(
+      @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization
+  ) throws UsernameNotFoundException
+  {
+    String token = authorization.replace("Bearer ", "");
+
+    if (token.isBlank()) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+          .build();
+    }
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(PersonDto.fromEntity(personService.findByToken(token)));
   }
 }

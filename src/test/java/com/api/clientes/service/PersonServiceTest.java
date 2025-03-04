@@ -4,7 +4,9 @@ import com.api.clientes.controller.dto.PersonDto;
 import com.api.clientes.model.entity.Person;
 import com.api.clientes.model.repository.PersonRepository;
 import com.api.clientes.util.Role;
+import com.api.clientes.util.exception.PersonNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -80,5 +82,34 @@ public class PersonServiceTest {
 
     Assertions.assertEquals(persons, List.of(person1, person2));
     Mockito.verify(personRepository).findAll();
+  }
+
+  @Test
+  @DisplayName("Teste metodo deletar usuario")
+  public void deletePersonTest() {
+    Person person1 = new Person(
+        1L,
+        "Xicrinho",
+        "xicrinhobolado@gmail.com",
+        "123456",
+        Role.ADMIN);
+
+    Mockito.when(personRepository.findById(1L))
+        .thenReturn(Optional.of(person1));
+
+    Assertions.assertDoesNotThrow(() -> personService.delete(1L));
+    Mockito.verify(personRepository).findById(1L);
+  }
+
+  @Test
+  @DisplayName("Testa metodo deletar caso usuario não exista")
+  public void deletePersonTestNotFound()
+  {
+    Mockito.when(personRepository.findById(1L))
+        .thenReturn(Optional.empty());
+
+    Assertions.assertThrows(PersonNotFoundException.class, () -> personService.delete(1L));
+
+    Mockito.verify(personRepository).findById(1L);
   }
 }

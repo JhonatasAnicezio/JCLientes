@@ -77,7 +77,7 @@ public class PersonController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Person> delete(
+  public ResponseEntity<String> delete(
       @PathVariable Long id
   )
   {

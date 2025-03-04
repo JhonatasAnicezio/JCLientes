@@ -64,11 +64,11 @@ public class PersonService implements UserDetailsService
         .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
   }
 
-  public Person delete(Long id)  {
+  public String delete(Long id)  {
     return personRepository.findById(id)
         .map(person -> {
           personRepository.delete(person);
-          return person;
+          return "Person deleted successfully";
         }).orElseThrow(PersonNotFoundException::new);
   }
 }

@@ -112,4 +112,34 @@ public class PersonServiceTest {
 
     Mockito.verify(personRepository).findById(1L);
   }
+
+  @Test
+  @DisplayName("Testa metodo para atualizar a role")
+  public void updateRoleTest() {
+    Person person1 = new Person(
+        1L,
+        "Xicrinho",
+        "xicrinhobolado@gmail.com",
+        "123456",
+        Role.USER);
+
+    Person personNewRole = new Person(
+        1L,
+        "Xicrinho",
+        "xicrinhobolado@gmail.com",
+        "123456",
+        Role.ADMIN);
+
+    Mockito.when(personRepository.findById(1L))
+        .thenReturn(Optional.of(person1));
+    Mockito.when(personRepository.save(person1))
+        .thenReturn(personNewRole);
+
+    Person person = personService.updateRole(Role.ADMIN, 1L);
+
+    Assertions.assertEquals(personNewRole, person);
+
+    Mockito.verify(personRepository).findById(1L);
+    Mockito.verify(personRepository).save(person1);
+  }
 }

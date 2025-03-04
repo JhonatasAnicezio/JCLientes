@@ -85,4 +85,15 @@ public class PersonControllerTest {
     mockMvc.perform(MockMvcRequestBuilders.get("/clients"))
         .andExpect(MockMvcResultMatchers.status().isOk());
   }
+
+  @Test
+  @DisplayName("Teste requisição DELETE /clients/{id}")
+  public void testDelete() throws Exception
+  {
+    Mockito.when(personService.delete(1L))
+            .thenReturn("Suceses!");
+
+    mockMvc.perform(MockMvcRequestBuilders.delete("/clients/1"))
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
+  }
 }

@@ -2,8 +2,10 @@ package com.api.clientes.controller;
 
 import com.api.clientes.controller.dto.PersonCreationDto;
 import com.api.clientes.controller.dto.PersonDto;
+import com.api.clientes.controller.dto.UpdateRolePersonDto;
 import com.api.clientes.model.entity.Person;
 import com.api.clientes.service.PersonService;
+import com.api.clientes.util.Role;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -83,5 +86,15 @@ public class PersonController {
   {
     return ResponseEntity.status(HttpStatus.NO_CONTENT)
         .body(personService.delete(id));
+  }
+
+  @PutMapping("/{id}")
+  public ResponseEntity<PersonDto> updateRole(
+      @PathVariable Long id,
+      @RequestBody UpdateRolePersonDto newRole
+  )
+  {
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(PersonDto.fromEntity(personService.updateRole(newRole.role(), id)));
   }
 }

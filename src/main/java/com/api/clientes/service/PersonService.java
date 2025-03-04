@@ -2,6 +2,7 @@ package com.api.clientes.service;
 
 import com.api.clientes.model.entity.Person;
 import com.api.clientes.model.repository.PersonRepository;
+import com.api.clientes.util.Role;
 import com.api.clientes.util.exception.PersonNotFoundException;
 import java.util.List;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -70,5 +71,15 @@ public class PersonService implements UserDetailsService
           personRepository.delete(person);
           return "Person deleted successfully";
         }).orElseThrow(PersonNotFoundException::new);
+  }
+
+  public Person updateRole(Role role, Long id)
+  {
+    Person person = personRepository.findById(id)
+        .orElseThrow(PersonNotFoundException::new);
+
+    person.setRole(role);
+
+    return personRepository.save(person);
   }
 }

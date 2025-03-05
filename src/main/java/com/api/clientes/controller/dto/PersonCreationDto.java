@@ -5,6 +5,7 @@ import com.api.clientes.util.Role;
 import com.api.clientes.util.anotations.ValidRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -22,8 +23,8 @@ public record PersonCreationDto(
     @Size(min = 3, message = "O nome é muito curto")
     String name,
 
-    @Email(message = "Formato de email invalido")
     @NotBlank(message = "O email é obrigatório")
+    @Email(message = "Formato de email invalido")
     String email,
 
     @Size(min = 8, message = "very short password, minimum 8 characters")
@@ -32,7 +33,7 @@ public record PersonCreationDto(
         message = "A senha deve conter letra maiúscula, minúscula, número e caractere especial.")
     String password,
 
-    @NotBlank(message = "O cago é obrigatória")
+    @NotBlank(message = "O cago é obrigatório")
     @ValidRole(message = "O cargo é invalido")
     String role
 ) {

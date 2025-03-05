@@ -9,11 +9,18 @@ import java.util.Locale;
 
 public class RoleValidator implements ConstraintValidator<ValidRole, String>
 {
+  private String message;
+
+  @Override
+  public void initialize(ValidRole constraintAnnotation) {
+    this.message = constraintAnnotation.message(); // Pega a mensagem personalizada
+  }
+
   @Override
   public boolean isValid(String role, ConstraintValidatorContext constraintValidatorContext)
   {
     if (role == null || role.isEmpty()) {
-      return false;
+      return true;
     }
 
     try

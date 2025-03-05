@@ -6,6 +6,7 @@ import com.api.clientes.controller.dto.UpdateRolePersonDto;
 import com.api.clientes.model.entity.Person;
 import com.api.clientes.service.PersonService;
 import com.api.clientes.util.Role;
+import com.api.clientes.util.anotations.ValidRole;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,11 +91,11 @@ public class PersonController {
 
   @PutMapping("/{id}")
   public ResponseEntity<PersonDto> updateRole(
-      @PathVariable Long id,
-      @RequestBody UpdateRolePersonDto newRole
+      @RequestBody @Valid UpdateRolePersonDto updateRole,
+      @PathVariable Long id
   )
   {
     return ResponseEntity.status(HttpStatus.OK)
-        .body(PersonDto.fromEntity(personService.updateRole(newRole.role(), id)));
+        .body(PersonDto.fromEntity(personService.updateRole(updateRole.role(), id)));
   }
 }

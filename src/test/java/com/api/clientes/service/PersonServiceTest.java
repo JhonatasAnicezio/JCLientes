@@ -193,7 +193,7 @@ public class PersonServiceTest {
     Mockito.when(personRepository.save(person1))
         .thenReturn(personNewRole);
 
-    Person person = personService.updateRole(Role.ADMIN, 1L);
+    Person person = personService.updateRole("ADMIN", 1L);
 
     Assertions.assertEquals(personNewRole, person);
 

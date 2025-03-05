@@ -3,6 +3,7 @@ package com.api.clientes.controller;
 import com.api.clientes.model.entity.Person;
 import com.api.clientes.service.PersonService;
 import com.api.clientes.util.Role;
+import com.api.clientes.util.exception.PersonNotFoundException;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -62,6 +63,8 @@ public class PersonControllerTest {
         .contentType(MediaType.APPLICATION_JSON)
         .content(personJson))
         .andExpect(MockMvcResultMatchers.status().isCreated());
+
+    Mockito.verify(personService).create(person);
   }
 
   @Test
@@ -181,7 +184,7 @@ public class PersonControllerTest {
             .content(personRoleNotFound))
         .andExpect(MockMvcResultMatchers.status().isBadRequest())
         .andExpect(MockMvcResultMatchers.jsonPath("$.role")
-            .value("O cago é obrigatório"));
+            .value("O cargo é obrigatório"));
 
     mockMvc.perform(MockMvcRequestBuilders.post("/clients")
         .contentType(MediaType.APPLICATION_JSON)
@@ -199,6 +202,8 @@ public class PersonControllerTest {
 
     mockMvc.perform(MockMvcRequestBuilders.get("/clients"))
         .andExpect(MockMvcResultMatchers.status().isOk());
+
+    Mockito.verify(personService).findAll();
   }
 
   @Test
@@ -218,6 +223,8 @@ public class PersonControllerTest {
         .header("Authorization", "Bearer tokenvalido"))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Xicrinho"));
+
+    Mockito.verify(personService).findByToken("tokenvalido");
   }
 
   @Test
@@ -238,6 +245,8 @@ public class PersonControllerTest {
         .header(HttpHeaders.AUTHORIZATION, "Bearer tokeninvalido"))
         .andExpect(MockMvcResultMatchers.status().isUnauthorized())
         .andExpect(MockMvcResultMatchers.content().string("Token invalido"));
+
+    Mockito.verify(personService).findByToken("tokeninvalido");
   }
 
   @Test
@@ -251,6 +260,78 @@ public class PersonControllerTest {
         .header(HttpHeaders.AUTHORIZATION, "Bearer tokensemusuario"))
         .andExpect(MockMvcResultMatchers.status().isUnauthorized())
         .andExpect(MockMvcResultMatchers.content().string("Usuario não encontrado!"));
+
+    Mockito.verify(personService).findByToken("tokensemusuario");
+  }
+
+  @Test
+  @DisplayName("Teste requisição PUT /clients/{id}")
+  public void testPutRole() throws Exception
+  {
+    Person person = new Person();
+    person.setId(1L);
+    person.setName("Xicrinho");
+    person.setEmail("<EMAIL>");
+    person.setPassword("<PASSWORD>");
+    person.setRole(Role.ADMIN);
+
+    Mockito.when(personService.updateRole("ADMIN", 1L))
+        .thenReturn(person);
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/clients/1")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\n" +
+            "  \"role\": \"ADMIN\"\n" +
+            "}"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Xicrinho"));
+
+    Mockito.verify(personService).updateRole("ADMIN", 1L);
+  }
+
+  @Test
+  @DisplayName("Teste requisição sem role PUT /clients/{id}")
+  public void testPutRoleNotFound() throws Exception
+  {
+    mockMvc.perform(MockMvcRequestBuilders.put("/clients/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\n" +
+                "  \"role\": \"\"\n" +
+                "}"))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.role")
+            .value("O cargo é obrigatório"));
+  }
+
+  @Test
+  @DisplayName("Teste requisição com role invalido PUT /clients/{id}")
+  public void testPutRoleInvalid() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.put("/clients/1")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\n" +
+            "  \"role\": \"PODEROSOCHEFAO\"\n" +
+            "}"))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.role")
+            .value("O cargo é invalido"));
+  }
+
+  @Test
+  @DisplayName("Teste requisição em caso de usuario não ser encotrado PUT /clients/{id}")
+  public void testPutRoleUserNotFound() throws Exception
+  {
+    Mockito.when(personService.updateRole("ADMIN", 1L))
+            .thenThrow(new PersonNotFoundException());
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/clients/1")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\n" +
+            "  \"role\": \"ADMIN\"\n" +
+            "}"))
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andExpect(MockMvcResultMatchers.content().string("Usuario não encontrado!"));
+
+    Mockito.verify(personService).updateRole("ADMIN", 1L);
   }
 
   @Test
@@ -262,5 +343,7 @@ public class PersonControllerTest {
 
     mockMvc.perform(MockMvcRequestBuilders.delete("/clients/1"))
         .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+    Mockito.verify(personService).delete(1L);
   }
 }

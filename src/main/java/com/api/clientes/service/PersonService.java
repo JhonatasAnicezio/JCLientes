@@ -73,12 +73,14 @@ public class PersonService implements UserDetailsService
         }).orElseThrow(PersonNotFoundException::new);
   }
 
-  public Person updateRole(Role role, Long id)
+  public Person updateRole(String role, Long id)
   {
+    Role newRole = Role.valueOf(role);
+
     Person person = personRepository.findById(id)
         .orElseThrow(PersonNotFoundException::new);
 
-    person.setRole(role);
+    person.setRole(newRole);
 
     return personRepository.save(person);
   }

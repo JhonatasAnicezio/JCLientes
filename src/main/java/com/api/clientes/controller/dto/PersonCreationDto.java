@@ -33,7 +33,7 @@ public record PersonCreationDto(
         message = "A senha deve conter letra maiúscula, minúscula, número e caractere especial.")
     String password,
 
-    @NotBlank(message = "O cago é obrigatório")
+    @NotBlank(message = "O cargo é obrigatório")
     @ValidRole(message = "O cargo é invalido")
     String role
 ) {

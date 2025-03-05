@@ -55,7 +55,7 @@ public class PersonService implements UserDetailsService
     String subject = jwtService.getSubject(token);
 
     return personRepository.findByEmail(subject)
-        .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + subject));
+        .orElseThrow(() -> new UsernameNotFoundException("Usuario não encontrado!"));
   }
 
   @Override

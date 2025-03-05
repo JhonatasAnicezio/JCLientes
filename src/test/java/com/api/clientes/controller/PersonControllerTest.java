@@ -3,17 +3,18 @@ package com.api.clientes.controller;
 import com.api.clientes.model.entity.Person;
 import com.api.clientes.service.PersonService;
 import com.api.clientes.util.Role;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import java.util.List;
-import javax.print.attribute.standard.Media;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -198,6 +199,58 @@ public class PersonControllerTest {
 
     mockMvc.perform(MockMvcRequestBuilders.get("/clients"))
         .andExpect(MockMvcResultMatchers.status().isOk());
+  }
+
+  @Test
+  @DisplayName("Teste requisição GET /clients/me")
+  public void testGetFindMe() throws Exception
+  {
+    Person person = new Person(
+        "Xicrinho",
+        "xicrinhobolado@gmail.com",
+        "Xicrinho123!",
+        Role.ADMIN);
+
+    Mockito.when(personService.findByToken("tokenvalido"))
+        .thenReturn(person);
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/clients/me")
+        .header("Authorization", "Bearer tokenvalido"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Xicrinho"));
+  }
+
+  @Test
+  @DisplayName("Teste requisição caso falte o token GET /clients/me")
+  public void testGetFindMeTokenNotFound() throws Exception
+  {
+    mockMvc.perform(MockMvcRequestBuilders.get("/clients/me"))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest());
+  }
+
+  @Test
+  @DisplayName("Teste requisição caso token invalido GET /clients/me")
+  public void testGetFindMeTokenInvalid() throws Exception {
+    Mockito.when(personService.findByToken("tokeninvalido"))
+            .thenThrow(new JWTDecodeException("Token invalido"));
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/clients/me")
+        .header(HttpHeaders.AUTHORIZATION, "Bearer tokeninvalido"))
+        .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+        .andExpect(MockMvcResultMatchers.content().string("Token invalido"));
+  }
+
+  @Test
+  @DisplayName("Teste requisição caso usuario não exista GET /clients/me")
+  public void testGetFindMeUserNotFound() throws Exception
+  {
+    Mockito.when(personService.findByToken("tokensemusuario"))
+        .thenThrow(new UsernameNotFoundException("Usuario não encontrado!"));
+
+    mockMvc.perform(MockMvcRequestBuilders.get("/clients/me")
+        .header(HttpHeaders.AUTHORIZATION, "Bearer tokensemusuario"))
+        .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+        .andExpect(MockMvcResultMatchers.content().string("Usuario não encontrado!"));
   }
 
   @Test

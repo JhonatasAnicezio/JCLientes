@@ -1,6 +1,7 @@
 package com.api.clientes.controller.advice;
 
 import com.api.clientes.util.exception.PersonNotFoundException;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,13 @@ public class GlobalControllerAdvice {
     
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(errors);
+  }
+
+  @ExceptionHandler(JWTDecodeException.class)
+  public ResponseEntity<String> handleJwtDecode(JWTDecodeException exception)
+  {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        .body("Token invalido");
   }
 
   @ExceptionHandler(UsernameNotFoundException.class)

@@ -5,6 +5,7 @@ import com.api.clientes.model.entity.Person;
 import com.api.clientes.model.repository.PersonRepository;
 import com.api.clientes.util.Role;
 import com.api.clientes.util.exception.PersonNotFoundException;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -16,6 +17,7 @@ import org.mockito.mock.MockType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -28,6 +30,9 @@ public class PersonServiceTest {
 
   @MockBean
   PersonRepository personRepository;
+
+  @MockBean
+  JwtService jwtService;
 
   @Test
   @DisplayName("Testa cadastro de um novo Person")
@@ -82,6 +87,59 @@ public class PersonServiceTest {
 
     Assertions.assertEquals(persons, List.of(person1, person2));
     Mockito.verify(personRepository).findAll();
+  }
+
+  @Test
+  @DisplayName("Testa metodo busca usuario por token")
+  public void findPersonByTokenTest()
+  {
+    Person person = new Person(
+        "Xicrinho",
+        "xicrinhobolado@gmail.com",
+        "Xicrinho123!",
+        Role.ADMIN);
+
+    Mockito.when(jwtService.getSubject("tokenvalido"))
+        .thenReturn("Xicrinho");
+
+    Mockito.when(personRepository.findByEmail("Xicrinho"))
+        .thenReturn(Optional.of(person));
+
+    Person personByToken = personService.findByToken("tokenvalido");
+
+    Assertions.assertEquals(person, personByToken);
+
+    Mockito.verify(jwtService).getSubject("tokenvalido");
+    Mockito.verify(personRepository).findByEmail("Xicrinho");
+  }
+
+  @Test
+  @DisplayName("Testa metodo busca por token em caso de erro")
+  public void findPersonByTokenTestNotFound()
+  {
+    Mockito.when(jwtService.getSubject("tokeninvalido"))
+        .thenThrow(new JWTDecodeException("Token invalido"));
+
+    Assertions.assertThrows(JWTDecodeException.class,
+        () -> personService.findByToken("tokeninvalido"));
+
+    Mockito.verify(jwtService).getSubject("tokeninvalido");
+  }
+
+  @Test
+  @DisplayName("Testa metodo busca por token caso não tenha usuario")
+  public void findPersonByTokenNotFound()
+  {
+    Mockito.when(jwtService.getSubject("tokenvalido"))
+        .thenReturn("Xicrinho");
+    Mockito.when(personRepository.findByEmail("Xicrinho"))
+        .thenReturn(Optional.empty());
+
+    Assertions.assertThrows(UsernameNotFoundException.class,
+        () -> personService.findByToken("tokenvalido"));
+
+    Mockito.verify(jwtService).getSubject("tokenvalido");
+    Mockito.verify(personRepository).findByEmail("Xicrinho");
   }
 
   @Test

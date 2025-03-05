@@ -8,6 +8,9 @@ import com.api.clientes.service.PersonService;
 import com.api.clientes.util.Role;
 import com.api.clientes.util.anotations.ValidRole;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -75,7 +78,6 @@ public class PersonController {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
           .build();
     }
-
     return ResponseEntity.status(HttpStatus.OK)
         .body(PersonDto.fromEntity(personService.findByToken(token)));
   }

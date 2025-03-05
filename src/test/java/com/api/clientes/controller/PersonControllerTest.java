@@ -228,11 +228,19 @@ public class PersonControllerTest {
   }
 
   @Test
-  @DisplayName("Teste requisição caso falte o token GET /clients/me")
-  public void testGetFindMeTokenNotFound() throws Exception
+  @DisplayName("Teste requisição caso falte o header GET /clients/me")
+  public void testGetFindMeHeaderNotFound() throws Exception
   {
     mockMvc.perform(MockMvcRequestBuilders.get("/clients/me"))
         .andExpect(MockMvcResultMatchers.status().isBadRequest());
+  }
+
+  @Test
+  @DisplayName("Teste requisição caso falte o token GET /client/me")
+  public void testGetFindMeTokenNotFound() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.get("/clients/me")
+        .header(HttpHeaders.AUTHORIZATION, "Bearer "))
+        .andExpect(MockMvcResultMatchers.status().isUnauthorized());
   }
 
   @Test

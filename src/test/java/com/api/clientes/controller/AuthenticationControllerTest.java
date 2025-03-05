@@ -47,4 +47,31 @@ public class AuthenticationControllerTest {
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.token").isNotEmpty());
   }
+
+  @Test
+  @DisplayName("Testa caso falte parametros para o login")
+  public void loginTestFail() throws Exception
+  {
+    String authNotPassword = "{\n" +
+        "  \"email\": \"xicrinhobolado@gmail.com\"\n" +
+        "}";
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/authentication")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(authNotPassword))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.password")
+            .value("Senha é obrigatória"));
+
+    String authNotEmail = "{\n" +
+        "  \"password\": \"Xicrinho123!\"\n" +
+        "}";
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/authentication")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(authNotEmail))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.email")
+            .value("Email é obrigatório"));
+  }
 }

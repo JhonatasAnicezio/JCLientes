@@ -25,6 +25,7 @@ public class SpringConfiguration {
         .authorizeHttpRequests(authorize -> authorize
             .requestMatchers(HttpMethod.POST, "/clients").permitAll()
             .requestMatchers(HttpMethod.POST, "/authentication").permitAll()
+            .requestMatchers(HttpMethod.GET, "/clients/me").permitAll()
             .anyRequest().authenticated())
         .build();
   }

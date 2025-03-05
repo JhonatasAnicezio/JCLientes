@@ -346,4 +346,17 @@ public class PersonControllerTest {
 
     Mockito.verify(personService).delete(1L);
   }
+
+  @Test
+  @DisplayName("Teste requisição caso usuario não seja encontrado DELETE /clients/{id}")
+  public void testDeleteUserNotFound() throws Exception {
+    Mockito.when(personService.delete(1L))
+            .thenThrow(new PersonNotFoundException());
+
+    mockMvc.perform(MockMvcRequestBuilders.delete("/clients/1"))
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andExpect(MockMvcResultMatchers.content().string("Usuario não encontrado!"));
+
+    Mockito.verify(personService).delete(1L);
+  }
 }

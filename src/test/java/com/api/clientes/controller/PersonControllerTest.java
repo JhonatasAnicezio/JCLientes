@@ -8,6 +8,7 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -329,6 +330,14 @@ public class PersonControllerTest
   @DisplayName("Teste requisição PUT /clients/{id}")
   public void testPutRole() throws Exception
   {
+    Person personManager = new Person();
+    personManager.setId(1L);
+    personManager.setName("Xicrinho");
+    personManager.setRole(Role.MANAGER);
+
+    Mockito.when(personService.findByToken(Mockito.anyString()))
+        .thenReturn(personManager);
+
     Person person = new Person();
     person.setId(1L);
     person.setName("Xicrinho");
@@ -340,6 +349,7 @@ public class PersonControllerTest
         .thenReturn(person);
 
     mockMvc.perform(MockMvcRequestBuilders.put("/clients/1")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer tokenmanager")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\n" +
                 "  \"role\": \"ADMIN\"\n" +
@@ -354,7 +364,16 @@ public class PersonControllerTest
   @DisplayName("Teste requisição sem role PUT /clients/{id}")
   public void testPutRoleNotFound() throws Exception
   {
+    Person personManager = new Person();
+    personManager.setId(1L);
+    personManager.setName("Xicrinho");
+    personManager.setRole(Role.MANAGER);
+
+    Mockito.when(personService.findByToken(Mockito.anyString()))
+        .thenReturn(personManager);
+
     mockMvc.perform(MockMvcRequestBuilders.put("/clients/1")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer tokenmanager")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\n" +
                 "  \"role\": \"\"\n" +
@@ -368,7 +387,16 @@ public class PersonControllerTest
   @DisplayName("Teste requisição com role invalido PUT /clients/{id}")
   public void testPutRoleInvalid() throws Exception
   {
+    Person personManager = new Person();
+    personManager.setId(1L);
+    personManager.setName("Xicrinho");
+    personManager.setRole(Role.MANAGER);
+
+    Mockito.when(personService.findByToken(Mockito.anyString()))
+        .thenReturn(personManager);
+
     mockMvc.perform(MockMvcRequestBuilders.put("/clients/1")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer tokenmanager")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\n" +
                 "  \"role\": \"PODEROSOCHEFAO\"\n" +
@@ -382,10 +410,19 @@ public class PersonControllerTest
   @DisplayName("Teste requisição em caso de usuario não ser encotrado PUT /clients/{id}")
   public void testPutRoleUserNotFound() throws Exception
   {
+    Person personManager = new Person();
+    personManager.setId(1L);
+    personManager.setName("Xicrinho");
+    personManager.setRole(Role.MANAGER);
+
+    Mockito.when(personService.findByToken(Mockito.anyString()))
+        .thenReturn(personManager);
+
     Mockito.when(personService.updateRole("ADMIN", 1L))
         .thenThrow(new PersonNotFoundException());
 
     mockMvc.perform(MockMvcRequestBuilders.put("/clients/1")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer tokenmanager")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{\n" +
                 "  \"role\": \"ADMIN\"\n" +
@@ -394,6 +431,73 @@ public class PersonControllerTest
         .andExpect(MockMvcResultMatchers.content().string("Usuario não encontrado!"));
 
     Mockito.verify(personService).updateRole("ADMIN", 1L);
+  }
+
+  @Test
+  @DisplayName("Teste requisição sem o header PUT /clients/{id}")
+  public void testPutHeaderNotFound() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.put("/clients/1")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\n" +
+            "  \"role\": \"ADMIN\"\n" +
+            "}"))
+        .andExpect(MockMvcResultMatchers.status().isForbidden());
+  }
+
+  @Test
+  @DisplayName("Teste requisição sem o token PUT /clients/{id}")
+  public void testPutTokenNotFound() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.put("/clients/1")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer ")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\n" +
+                "  \"role\": \"ADMIN\"\n" +
+                "}"))
+        .andExpect(MockMvcResultMatchers.status().isForbidden());
+  }
+
+  @Test
+  @DisplayName("Teste requisição com usuario PUT /clients/{id}")
+  public void testPutUser() throws Exception {
+    Person personUser = new Person();
+    personUser.setId(1L);
+    personUser.setName("Xicrinho");
+    personUser.setRole(Role.USER);
+
+    Mockito.when(personService.findByToken(Mockito.anyString()))
+            .thenReturn(personUser);
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/clients/1")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer tokenuser")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\n" +
+                "  \"role\": \"ADMIN\"\n" +
+                "}"))
+        .andExpect(MockMvcResultMatchers.status().isForbidden());
+
+    Mockito.verify(personService).findByToken(Mockito.anyString());
+  }
+
+  @Test
+  @DisplayName("Teste requisição com admin PUT /clients/{id}")
+  public void testPutAdmin() throws Exception {
+    Person personAdmin = new Person();
+    personAdmin.setId(1L);
+    personAdmin.setName("Xicrinho");
+    personAdmin.setRole(Role.USER);
+
+    Mockito.when(personService.findByToken(Mockito.anyString()))
+        .thenReturn(personAdmin);
+
+    mockMvc.perform(MockMvcRequestBuilders.put("/clients/1")
+            .header(HttpHeaders.AUTHORIZATION, "Bearer tokenadmin")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{\n" +
+                "  \"role\": \"ADMIN\"\n" +
+                "}"))
+        .andExpect(MockMvcResultMatchers.status().isForbidden());
+
+    Mockito.verify(personService).findByToken(Mockito.anyString());
   }
 
   @Test

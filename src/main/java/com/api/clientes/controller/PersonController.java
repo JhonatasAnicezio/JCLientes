@@ -98,6 +98,7 @@ public class PersonController {
   }
 
   @PutMapping("/{id}")
+  @Secured("MANAGER")
   public ResponseEntity<PersonDto> updateRole(
       @RequestBody @Valid UpdateRolePersonDto updateRole,
       @PathVariable Long id

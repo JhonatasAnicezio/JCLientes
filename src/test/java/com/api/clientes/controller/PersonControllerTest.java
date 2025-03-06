@@ -283,7 +283,7 @@ public class PersonControllerTest
   public void testGetFindMeHeaderNotFound() throws Exception
   {
     mockMvc.perform(MockMvcRequestBuilders.get("/clients/me"))
-        .andExpect(MockMvcResultMatchers.status().isBadRequest());
+        .andExpect(MockMvcResultMatchers.status().isUnauthorized());
   }
 
   @Test
@@ -319,8 +319,8 @@ public class PersonControllerTest
 
     mockMvc.perform(MockMvcRequestBuilders.get("/clients/me")
             .header(HttpHeaders.AUTHORIZATION, "Bearer tokensemusuario"))
-        .andExpect(MockMvcResultMatchers.status().isUnauthorized())
-        .andExpect(MockMvcResultMatchers.content().string("Token invalido"));
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andExpect(MockMvcResultMatchers.content().string("Usuario não encontrado!"));
 
     Mockito.verify(personService).findByToken("tokensemusuario");
   }
@@ -432,5 +432,29 @@ public class PersonControllerTest
         .andExpect(MockMvcResultMatchers.content().string("Usuario não encontrado!"));
 
     Mockito.verify(personService).findByToken(Mockito.anyString());
+  }
+
+  @Test
+  @DisplayName("Teste requisição caso USER DELETE /clients/{id}")
+  public void testUserDelete() throws Exception {
+    Person personUser = new Person();
+    personUser.setId(1L);
+    personUser.setName("Xicrinho");
+    personUser.setRole(Role.USER);
+
+    Mockito.when(personService.findByToken(Mockito.anyString()))
+        .thenReturn(personUser);
+
+    mockMvc.perform(MockMvcRequestBuilders.delete("/clients/1")
+        .header(HttpHeaders.AUTHORIZATION, "Bearer tokenuser"))
+        .andExpect(MockMvcResultMatchers.status().isForbidden());
+  }
+
+  @Test
+  @DisplayName("Teste requisição caso não seja passado o header DELETE /clients/{id}")
+  public void testDeleteHeaderNotFound() throws Exception
+  {
+    mockMvc.perform(MockMvcRequestBuilders.delete("/clients/1"))
+        .andExpect(MockMvcResultMatchers.status().isForbidden());
   }
 }

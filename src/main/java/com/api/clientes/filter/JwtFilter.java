@@ -36,6 +36,8 @@ public class JwtFilter extends OncePerRequestFilter
 
     Person person = personService.findByToken(token);
 
+    request.setAttribute("authenticatedUser", person);
+
     UsernamePasswordAuthenticationToken authentication =
         new UsernamePasswordAuthenticationToken(person, null, person.getAuthorities());
 

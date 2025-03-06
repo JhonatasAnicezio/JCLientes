@@ -263,12 +263,13 @@ public class PersonControllerTest
   public void testGetFindMe() throws Exception
   {
     Person person = new Person(
+        1L,
         "Xicrinho",
         "xicrinhobolado@gmail.com",
         "Xicrinho123!",
         Role.ADMIN);
 
-    Mockito.when(personService.findByToken("tokenvalido"))
+    Mockito.when(personService.findByToken(Mockito.anyString()))
         .thenReturn(person);
 
     mockMvc.perform(MockMvcRequestBuilders.get("/clients/me")
@@ -276,7 +277,7 @@ public class PersonControllerTest
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Xicrinho"));
 
-    Mockito.verify(personService).findByToken("tokenvalido");
+    Mockito.verify(personService).findByToken(Mockito.anyString());
   }
 
   @Test

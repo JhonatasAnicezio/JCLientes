@@ -7,6 +7,7 @@ import com.api.clientes.model.entity.Person;
 import com.api.clientes.service.PersonService;
 import com.api.clientes.util.Role;
 import com.api.clientes.util.anotations.ValidRole;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpServerErrorException;
 
 /**
  *  Person Controller for route /clients.
@@ -71,20 +73,23 @@ public class PersonController {
 
   @GetMapping("/me")
   public ResponseEntity<PersonDto> findByToken(
-      @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization
+      HttpServletRequest request
   ) throws UsernameNotFoundException
   {
-    String token = authorization.replace("Bearer ", "");
+    Person person = (Person) request.getAttribute("authenticatedUser");
 
-    if (token.isBlank()) {
+    System.out.println(person);
+    if (person == null) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
           .build();
     }
+
     return ResponseEntity.status(HttpStatus.OK)
-        .body(PersonDto.fromEntity(personService.findByToken(token)));
+        .body(PersonDto.fromEntity(person));
   }
 
   @DeleteMapping("/{id}")
+  @Secured({" MANAGER "})
   public ResponseEntity<String> delete(
       @PathVariable Long id
   )

@@ -6,7 +6,6 @@ import com.api.clientes.util.Role;
 import com.api.clientes.util.exception.PersonNotFoundException;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.ActiveProfiles;
@@ -322,7 +320,7 @@ public class PersonControllerTest
     mockMvc.perform(MockMvcRequestBuilders.get("/clients/me")
             .header(HttpHeaders.AUTHORIZATION, "Bearer tokensemusuario"))
         .andExpect(MockMvcResultMatchers.status().isUnauthorized())
-        .andExpect(MockMvcResultMatchers.content().string("Usuario não encontrado!"));
+        .andExpect(MockMvcResultMatchers.content().string("Token invalido"));
 
     Mockito.verify(personService).findByToken("tokensemusuario");
   }
@@ -402,26 +400,37 @@ public class PersonControllerTest
   @DisplayName("Teste requisição DELETE /clients/{id}")
   public void testDelete() throws Exception
   {
+    Person personManager = new Person();
+    personManager.setId(1L);
+    personManager.setName("Xicrinho");
+    personManager.setRole(Role.MANAGER);
+
+    Mockito.when(personService.findByToken(Mockito.anyString()))
+            .thenReturn(personManager);
+
     Mockito.when(personService.delete(1L))
         .thenReturn("Suceses!");
 
-    mockMvc.perform(MockMvcRequestBuilders.delete("/clients/1"))
+    mockMvc.perform(MockMvcRequestBuilders.delete("/clients/1")
+            .header(HttpHeaders.AUTHORIZATION,"Bearer tokenmanager"))
         .andExpect(MockMvcResultMatchers.status().isNoContent());
 
     Mockito.verify(personService).delete(1L);
+    Mockito.verify(personService).findByToken(Mockito.anyString());
   }
 
   @Test
   @DisplayName("Teste requisição caso usuario não seja encontrado DELETE /clients/{id}")
   public void testDeleteUserNotFound() throws Exception
   {
-    Mockito.when(personService.delete(1L))
-        .thenThrow(new PersonNotFoundException());
+    Mockito.when(personService.findByToken(Mockito.anyString()))
+            .thenThrow(new UsernameNotFoundException("Usuario não encontrado!"));
 
-    mockMvc.perform(MockMvcRequestBuilders.delete("/clients/1"))
+    mockMvc.perform(MockMvcRequestBuilders.delete("/clients/1")
+        .header(HttpHeaders.AUTHORIZATION,"Bearer tokenmanager"))
         .andExpect(MockMvcResultMatchers.status().isNotFound())
         .andExpect(MockMvcResultMatchers.content().string("Usuario não encontrado!"));
 
-    Mockito.verify(personService).delete(1L);
+    Mockito.verify(personService).findByToken(Mockito.anyString());
   }
 }

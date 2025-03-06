@@ -78,7 +78,6 @@ public class PersonController {
   {
     Person person = (Person) request.getAttribute("authenticatedUser");
 
-    System.out.println(person);
     if (person == null) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
           .build();
@@ -89,7 +88,7 @@ public class PersonController {
   }
 
   @DeleteMapping("/{id}")
-  @Secured({" MANAGER "})
+  @Secured("MANAGER")
   public ResponseEntity<String> delete(
       @PathVariable Long id
   )

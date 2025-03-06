@@ -33,7 +33,6 @@ public class AuthenticationController {
   ) {
     UsernamePasswordAuthenticationToken usernamePassword =
         new UsernamePasswordAuthenticationToken(authDto.email(), authDto.password());
-
     Authentication user = authenticationManager.authenticate(usernamePassword);
 
     return ResponseEntity.status(HttpStatus.OK)

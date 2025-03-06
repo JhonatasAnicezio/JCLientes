@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -60,6 +61,7 @@ public class PersonController {
   }
 
   @GetMapping
+  @Secured({ "ADMIN", "MANAGER" })
   public ResponseEntity<List<PersonDto>> findAll() {
     return ResponseEntity.status(HttpStatus.OK)
         .body(personService.findAll().stream()

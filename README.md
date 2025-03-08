@@ -1,42 +1,55 @@
 # JClients - API de Gerenciamento de Clientes
 
-## 1. Introdução
+## Introdução
 
-### 1.1 Visão Geral
+### Visão Geral
 Esta API fornece funcionalidades para gerenciar informações de clientes, incluindo criação, leitura, atualização e exclusão de registros. Ela também oferece um sistema de autenticação e autorização para proteger os dados e funcionalidades da aplicação.
 
-### 1.2 Tecnologias Utilizadas
+<details>
+  <summary><strong>Tecnologias Utilizadas</strong></summary><br />
+  
 - **Linguagem de Programação**: Java 17
 - **Framework**: Spring Boot 3.4.3
 - **Banco de Dados**: PostgreSQL e H2 (para testes)
 - **Segurança**: Spring Security e JWT (JSON Web Tokens)
 - **Outras Dependências**: Spring Data JPA, Lombok, Spring Boot Actuator, Spring Boot Validation
+</details>
 
-### 1.3 Segurança
+<details>
+  <summary><strong>Segurança</strong></summary><br />
+  
 - A API utiliza um sistema de segurança para proteger os endpoints.
 - A autenticação é baseada em tokens JWT.
 - As senhas são armazenadas de forma segura, utilizando criptografia bcrypt.
 - As permissões são baseadas em roles (USER e ADMIN).
+  </details>
 
-## 2. Arquitetura
+## Arquitetura
 
-### 2.1 Visão Geral
+<details>
+  <summary><strong>Visão Geral</strong></summary><br />
+  
 A aplicação segue uma arquitetura em camadas:
 - **Controller**: Recebe as requisições HTTP e retorna as respostas.
 - **Service**: Contém a lógica de negócios.
 - **Repository**: Gerencia a comunicação com o banco de dados.
 - **Security**: Responsável pela autenticação e autorização.
+</details>
 
-### 2.2 Fluxo de Autenticação
+<details>
+  <summary><strong>Fluxo de Autenticação</strong></summary><br />
+
 1. O cliente envia suas credenciais para o endpoint de autenticação.
 2. A API verifica as credenciais e gera um token JWT de acesso.
 3. O token é retornado ao cliente.
 4. O cliente inclui o token no cabeçalho das requisições subsequentes.
 5. A API valida o token e autoriza o acesso aos endpoints protegidos.
+</details>
 
-## 3. API
+## API
 
-### 3.1 Endpoints
+<details>
+  <summary><strong>Endpoints</strong></summary><br />
 
 #### Retorna os dados do usuário de acordo com o token
 ```bash
@@ -94,8 +107,11 @@ body: {
 ##### Respostas:
 - **201 Created**: Usuário cadastrado e token retornado.
 - **400 Bad Request**: Campos inválidos ou email já cadastrado.
+</details>
 
-## 4. Rotas restritas a usuários administradores
+<details>
+  <summary><strong>Rotas restritas a usuários administradores</strong></summary><br />
+
 Nessas rotas é obrigatório a realização do login por parte de um administrador.
 
 #### Retorna todos os usuários
@@ -141,13 +157,14 @@ body: {
 - **400 Bad Request**: Role inválida.
 - **403 Forbidden**: Acesso negado.
 - **404 Not Found**: Usuário não encontrado.
+</details>
 
-## 5. Banco de Dados
+## Banco de Dados
 
-### 5.1 Modelo de Dados
+### Modelo de Dados
 - **Tabela de Clientes**: ID, nome, email, senha, role, etc.
 
-### 5.2 Esquema do Banco de Dados (PostgreSQL)
+### Esquema do Banco de Dados (PostgreSQL)
 ```sql
 CREATE TABLE clientes (
     id SERIAL PRIMARY KEY,
@@ -158,13 +175,13 @@ CREATE TABLE clientes (
 );
 ```
 
-## 6. Segurança
+## Segurança
 - Autenticação baseada em tokens JWT.
 - Criptografia de senhas com bcrypt.
 - Proteção contra ataques comuns (SQL Injection, XSS, CSRF).
 - A API não mantém sessões, ela é **stateless**.
 
-## 7. Monitoramento e Logging
+## Monitoramento e Logging
 - A API pode utilizar Spring Boot Actuator para métricas e logs.
 - Logs são armazenados utilizando SLF4J com Logback.
 - Monitoramento pode ser integrado ao Prometheus e Grafana.

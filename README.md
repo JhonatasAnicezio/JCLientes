@@ -305,9 +305,3 @@ Este método facilita o processo de desenvolvimento e teste da aplicação sem p
 - Criptografia de senhas com bcrypt.
 - Proteção contra ataques comuns (SQL Injection, XSS).
 - A API não mantém sessões, ela é **stateless**.
-
-## Monitoramento e Logging
-- A API pode utilizar Spring Boot Actuator para métricas e logs.
-- Logs são armazenados utilizando SLF4J com Logback.
-- Monitoramento pode ser integrado ao Prometheus e Grafana.
-

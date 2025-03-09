@@ -53,7 +53,7 @@ A aplicação segue uma arquitetura em camadas:
 
 #### Retorna os dados do usuário de acordo com o token
 ```bash
-GET /clientes/me
+GET /clients/me
 
 header: {
   "authorization": "Bearer token"
@@ -69,7 +69,7 @@ header: {
 
 #### Retorna um token referente ao usuário do login
 ```bash
-POST /autenticacao
+POST /authentication
 
 body: {
   "email": "user@user.com",
@@ -88,7 +88,7 @@ body: {
 
 #### Realiza o cadastro de um novo usuário e retorna um token referente ao login
 ```bash
-POST /clientes
+POST /clients
 
 body: {
   "email": "venenozo@gmail.com",
@@ -116,7 +116,7 @@ Nessas rotas é obrigatório a realização do login por parte de um administrad
 
 #### Retorna todos os usuários
 ```bash
-GET /clientes
+GET /clients
 ```
 | Parâmetro   | Tipo       | Descrição                           |
 | :---------- | :--------- | :---------------------------------- |
@@ -128,7 +128,7 @@ GET /clientes
 
 #### Remove um usuário de acordo com o seu ID
 ```bash
-DELETE /clientes/${id}
+DELETE /clients/${id}
 ```
 | Parâmetro   | Tipo       | Descrição                                   |
 | :---------- | :--------- | :------------------------------------------ |
@@ -141,7 +141,7 @@ DELETE /clientes/${id}
 
 #### Atualiza a role de um usuário de acordo com seu ID
 ```bash
-PUT /clientes/${id}
+PUT /clients/${id}
 
 body: {
   "role": "admin"

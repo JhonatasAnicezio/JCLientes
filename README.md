@@ -117,10 +117,14 @@ Nessas rotas é obrigatório a realização do login por parte de um administrad
 #### Retorna todos os usuários
 ```bash
 GET /clients
+
+header: {
+  "authorization": "Bearer token"
+}
 ```
-| Parâmetro   | Tipo       | Descrição                           |
-| :---------- | :--------- | :---------------------------------- |
-| `api_key`   | `string`   | **Obrigatório**. A chave da sua API |
+| Parâmetro   | Tipo       | Descrição                                                                     |
+| :---------- | :--------- |:------------------------------------------------------------------------------|
+| `authorization` | `string` | **Obrigatório**. O token JWT de um administrador ou gerente gerado pelo login |
 
 ##### Respostas:
 - **200 OK**: Retorna a lista de usuários.
@@ -129,10 +133,16 @@ GET /clients
 #### Remove um usuário de acordo com o seu ID
 ```bash
 DELETE /clients/${id}
+
+header: {
+  "authorization": "Bearer token"
+}
 ```
-| Parâmetro   | Tipo       | Descrição                                   |
-| :---------- | :--------- | :------------------------------------------ |
-| `id`        | `string`   | **Obrigatório**. ID do usuário que deseja apagar |
+| Parâmetro   | Tipo       | Descrição                                                          |
+| :---------- | :--------- |:-------------------------------------------------------------------|
+| `id`        | `string`   | **Obrigatório**. ID do usuário que deseja apagar                   |
+| `authorization` | `string` | **Obrigatório**. O token JWT de um administrador gerado pelo login |
+
 
 ##### Respostas:
 - **204 No Content**: Usuário removido com sucesso.
@@ -146,11 +156,16 @@ PUT /clients/${id}
 body: {
   "role": "admin"
 }
+
+header: {
+  "authorization": "Bearer token"
+}
 ```
 | Parâmetro   | Tipo       | Descrição                                   |
 | :---------- | :--------- | :------------------------------------------ |
 | `id`        | `string`   | **Obrigatório**. ID do usuário que deseja atualizar |
 | `role`      | `string`   | **Obrigatório**. A nova role do usuário |
+| `authorization` | `string` | **Obrigatório**. O token JWT de um administrador gerado pelo login |
 
 ##### Respostas:
 - **200 OK**: Role atualizada com sucesso.
@@ -162,16 +177,16 @@ body: {
 ## Banco de Dados
 
 ### Modelo de Dados
-- **Tabela de Clientes**: ID, nome, email, senha, role, etc.
+- **Tabela de Clientes**: ID, name, email, password, role.
 
 ### Esquema do Banco de Dados (PostgreSQL)
 ```sql
 CREATE TABLE clientes (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(255),
-    email VARCHAR(255) UNIQUE,
-    senha VARCHAR(255),
-    role VARCHAR(255) DEFAULT 'user'
+    name VARCHAR(255) UNIQUE,
+    password VARCHAR(255),
+    role VARCHAR(255)
 );
 ```
 

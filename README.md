@@ -190,6 +190,91 @@ CREATE TABLE clientes (
 );
 ```
 
+<details>
+  <summary><strong>Criação Automática do Banco de Dados</strong></summary><br />
+
+## Como o Banco de Dados é Criado
+
+A aplicação Spring Boot utiliza o PostgreSQL como banco de dados e configura a criação do banco automaticamente, se necessário. Se o banco de dados não existir, o Spring Boot irá criá-lo automaticamente com base nas configurações definidas no arquivo `application.properties`. A configuração do Hibernate está preparada para gerenciar a criação e atualização do banco de dados conforme as entidades JPA.
+
+A configuração de banco de dados no `application.properties` é a seguinte:
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/clientsdb
+spring.datasource.driverClassName=org.postgresql.Driver
+spring.datasource.username=admin
+spring.datasource.password=senhasupersecreta
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+```
+
+A propriedade `spring.jpa.hibernate.ddl-auto` pode ser configurada de diferentes formas para controlar como o banco de dados será criado ou atualizado. Durante o desenvolvimento, é possível usar a opção `update`, que cria ou altera o banco de dados automaticamente. Em ambientes de produção, recomenda-se desativar a criação automática e configurar o banco de dados manualmente.
+
+#### Exemplo de Configuração application.properties
+
+```properties
+spring.jpa.hibernate.ddl-auto=update
+```
+
+Isso permite que a aplicação crie ou altere a estrutura do banco de dados automaticamente com base nas suas entidades JPA.
+
+Se necessário, você pode também configurar o banco de dados manualmente com o seguinte comando SQL:
+
+```sql
+CREATE DATABASE clientsdb;
+```
+Após a criação do banco de dados, a aplicação pode ser executada normalmente.
+</details>
+
+<details>
+  <summary><strong>Criação e Execução do Banco de Dados com Docker</strong></summary><br>
+
+  ## Configuração do Banco de Dados Localmente com Docker
+
+  Para rodar o banco de dados PostgreSQL localmente, você pode utilizar o Docker. O arquivo docker-compose.yml a seguir configura o PostgreSQL, criando o banco de dados automaticamente ao iniciar o container.
+
+### Exemplo de Configuração `docker-compose.yml`
+
+```yaml
+  version: '3.8'
+  
+  services:
+    postgres:
+      image: postgres:latest
+      container_name: clientsdb
+      restart: always
+      environment:
+        POSTGRES_DB: clientsdb
+        POSTGRES_USER: admin
+        POSTGRES_PASSWORD: senhasecreta
+      ports:
+        - "5432:5432"
+  ```
+
+### Explicação das Configurações
+
+- **POSTGRES_DB**: Nome do banco de dados que será criado (neste caso, `clientsdb`).
+- **POSTGRES_USER**: Nome de usuário para acessar o banco de dados (neste caso, `admin`).
+- **POSTGRES_PASSWORD**: Senha para o usuário (neste caso, `senhasecreta`).
+- **ports**: Mapeia a porta 5432 do container para a porta 5432 da sua máquina local, permitindo que a aplicação se conecte ao banco.
+
+### Como Executar
+
+Para rodar o PostgreSQL com Docker, basta executar o comando:
+
+```bash
+  docker-compose up
+```
+
+Isso irá iniciar o container do PostgreSQL e criar o banco de dados clientsdb automaticamente.
+
+### Integração com a Aplicação
+
+Após rodar o banco localmente, a aplicação Spring Boot irá se conectar ao PostgreSQL conforme configurado no `application.properties` ou `docker-compose.yml`, utilizando a URL `jdbc:postgresql://localhost:5432/clientsdb`.
+
+Este método facilita o processo de desenvolvimento e teste da aplicação sem precisar de uma instalação manual do banco de dados.
+
+</details>
+
 ## Segurança
 - Autenticação baseada em tokens JWT.
 - Criptografia de senhas com bcrypt.

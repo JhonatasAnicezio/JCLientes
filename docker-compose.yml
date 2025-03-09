@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: clientsdb
+    restart: always
+    environment:
+      POSTGRES_DB: clientsdb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: senhasecreta
+    ports:
+      - "5432:5432"

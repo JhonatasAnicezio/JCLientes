@@ -12,6 +12,7 @@ Esta API fornece funcionalidades para gerenciar informações de clientes, inclu
 - **Framework**: Spring Boot 3.4.3
 - **Banco de Dados**: PostgreSQL e H2 (para testes)
 - **Segurança**: Spring Security e JWT (JSON Web Tokens)
+- **Testes**: JUnit, Mockito, Jacoco (para cobertura de testes)
 - **Outras Dependências**: Spring Data JPA, Lombok, Spring Boot Actuator, Spring Boot Validation
 </details>
 
@@ -44,6 +45,30 @@ A aplicação segue uma arquitetura em camadas:
 3. O token é retornado ao cliente.
 4. O cliente inclui o token no cabeçalho das requisições subsequentes.
 5. A API valida o token e autoriza o acesso aos endpoints protegidos.
+</details>
+
+<details>
+<summary><strong>Testes</strong></summary><br>
+
+A aplicação conta com uma suíte de testes automatizados utilizando JUnit e a biblioteca de testes do Spring. Para garantir a qualidade e estabilidade do código, todos os módulos da aplicação possuem cobertura de testes.
+
+### Como rodar os testes
+
+Os testes podem ser executados utilizando o Maven, com o comando:
+
+```bash
+  mvn test
+```
+
+### Banco de dados de testes
+
+Durante os testes, o H2Database é utilizado para simular um banco de dados em memória. Esse banco permite a execução de testes sem a necessidade de interagir com o banco de dados real (PostgreSQL), garantindo um ambiente isolado e controlado para os testes.
+
+### Cobertura de Testes
+
+A cobertura de testes é monitorada com o plugin Jacoco, que gera um relatório indicando a cobertura do código. A configuração mínima de cobertura é de 90% para as linhas de código, conforme especificado na configuração do `jacoco-maven-plugin` no `pom.xml`. Caso essa cobertura não seja atingida, o processo de build será interrompido.
+
+O relatório de cobertura pode ser visualizado após a execução dos testes, permitindo verificar quais partes do código foram efetivamente testadas.
 </details>
 
 ## API

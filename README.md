@@ -178,7 +178,7 @@ CREATE TABLE clientes (
 ## Segurança
 - Autenticação baseada em tokens JWT.
 - Criptografia de senhas com bcrypt.
-- Proteção contra ataques comuns (SQL Injection, XSS, CSRF).
+- Proteção contra ataques comuns (SQL Injection, XSS).
 - A API não mantém sessões, ela é **stateless**.
 
 ## Monitoramento e Logging

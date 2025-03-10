@@ -16,15 +16,6 @@ Esta API fornece funcionalidades para gerenciar informações de clientes, inclu
 - **Outras Dependências**: Spring Data JPA, Lombok, Spring Boot Actuator, Spring Boot Validation
 </details>
 
-<details>
-  <summary><strong>Segurança</strong></summary><br />
-  
-- A API utiliza um sistema de segurança para proteger os endpoints.
-- A autenticação é baseada em tokens JWT.
-- As senhas são armazenadas de forma segura, utilizando criptografia bcrypt.
-- As permissões são baseadas em roles (USER e ADMIN).
-  </details>
-
 ## Arquitetura
 
 <details>
